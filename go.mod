@@ -1,4 +1,4 @@
-module KunLunQiLian/confserver
+module github.com/KunLunQiLian/confserver
 
 go 1.17
 
