@@ -139,3 +139,15 @@ func (conf *Configuration) mustMarshal(c interface{}) {
 		panic(err)
 	}
 }
+
+func AddCommand(cmds ...*cobra.Command) {
+	config.Command.AddCommand(cmds...)
+}
+
+func Execute(run func(cmd *cobra.Command, args []string)) {
+	config.Command.Run = run
+
+	if err := config.Execute(); err != nil {
+		panic(err)
+	}
+}
