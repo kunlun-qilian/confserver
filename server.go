@@ -2,6 +2,7 @@ package confserver
 
 import (
 	"fmt"
+
 	"github.com/gin-contrib/gzip"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
@@ -47,12 +48,16 @@ func (s *Server) SetDefaults() {
 
 func (s *Server) Init() {
 	s.SetDefaults()
-
+	// gzip
 	s.r.Use(gzip.Gzip(gzip.DefaultCompression))
-
+	// cors
+	s.r.Use(DefaultCORS())
+	// log
 	s.r.Use(SetLogger())
 
-	s.r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	if s.Mode == "debug" {
+		s.r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	}
 }
 
 func (s *Server) Engine() *gin.Engine {

@@ -83,7 +83,16 @@ func (conf *Configuration) Initialize() {
 		conf.Feature = projectFeature
 	}
 
-	conf.Command = &cobra.Command{}
+	conf.Command = &cobra.Command{
+		PreRun: func(cmd *cobra.Command, args []string) {
+			if conf.ShouldGenerateConfig {
+				conf.dockerize()
+			}
+		},
+		Run: func(cmd *cobra.Command, args []string) {
+
+		},
+	}
 
 	if conf.Use == "" {
 		conf.Use = "srv-x"

@@ -3,6 +3,7 @@ module github.com/KunLunQiLian/confserver
 go 1.17
 
 require (
+	github.com/gin-contrib/cors v1.3.1
 	github.com/gin-contrib/gzip v0.0.5
 	github.com/gin-gonic/gin v1.8.1
 	github.com/go-courier/envconf v1.4.0
