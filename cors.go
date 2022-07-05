@@ -46,6 +46,7 @@ var (
 func DefaultConfig() cors.Config {
 	return cors.Config{
 		AllowAllOrigins:  true,
+		AllowOrigins:     []string{"*"},
 		AllowMethods:     defaultCorsMethods,
 		AllowHeaders:     defaultCorsHeaders,
 		AllowCredentials: true,
