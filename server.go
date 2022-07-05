@@ -2,6 +2,7 @@ package confserver
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/gin-contrib/gzip"
 	"github.com/gin-gonic/gin"
@@ -55,7 +56,7 @@ func (s *Server) Init() {
 	// log
 	s.r.Use(SetLogger())
 
-	if s.Mode == "debug" {
+	if strings.ToLower(s.Mode) == "debug" {
 		s.r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	}
 }
