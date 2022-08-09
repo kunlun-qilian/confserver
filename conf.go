@@ -21,7 +21,6 @@ func init() {
 	config.Initialize()
 }
 
-// @deprecated
 func SetServiceName(serviceName string, rootDir string) {
 	config.Command.Use = serviceName
 	_, filename, _, _ := runtime.Caller(1)
@@ -68,6 +67,11 @@ func (conf *Configuration) ProjectName() string {
 		return conf.ServiceName() + "--" + conf.Feature
 	}
 	return conf.ServiceName()
+}
+
+func (conf *Configuration) WorkSpace() string {
+	paths := strings.Split(conf.projectRoot, "/")
+	return paths[len(paths)-1]
 }
 
 func (conf *Configuration) ServiceName() string {

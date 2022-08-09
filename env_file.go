@@ -9,7 +9,10 @@ import (
 )
 
 func (conf *Configuration) dockerize() {
-	_ = writeToYamlFile("./config/default.yml", conf.defaultConfig(), yaml.Marshal)
+	_ = writeToFile("./config/default.yml", conf.defaultConfig(), yaml.Marshal)
+	_ = writeToFile("./Dockerfile", conf.dockerfile(), func(v interface{}) ([]byte, error) {
+		return v.([]byte), nil
+	})
 }
 
 func (conf *Configuration) defaultConfig() map[string]string {
@@ -25,7 +28,7 @@ func (conf *Configuration) defaultConfig() map[string]string {
 	return m
 }
 
-func writeToYamlFile(filename string, v interface{}, marshal func(v interface{}) ([]byte, error)) error {
+func writeToFile(filename string, v interface{}, marshal func(v interface{}) ([]byte, error)) error {
 	bytes, _ := marshal(v)
 	dir := filepath.Dir(filename)
 	if dir != "" {
