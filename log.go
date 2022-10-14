@@ -1,73 +1,87 @@
 package confserver
 
 import (
-	"github.com/sirupsen/logrus"
-	"net/http"
-	"os"
-	"time"
+    "github.com/sirupsen/logrus"
+    "net/http"
+    "os"
+    "time"
 
-	"github.com/gin-gonic/gin"
+    "github.com/gin-gonic/gin"
 )
 
 func defaultLogger() *logrus.Logger {
-	logger := logrus.New()
-	logger.SetFormatter(&logrus.JSONFormatter{})
-	logger.SetLevel(logrus.DebugLevel)
-	logger.Out = os.Stdout
-	gin.DefaultWriter = logger.Out
-	return logger
+    logger := logrus.New()
+    logger.SetFormatter(&logrus.JSONFormatter{})
+    logger.SetLevel(logrus.InfoLevel)
+    logger.Out = os.Stdout
+    gin.DefaultWriter = logger.Out
+    return logger
+}
+
+func (s *Server) SetLogger() {
+    if s.LogOption.LogFormatter == "json" {
+        logrus.SetFormatter(&logrus.JSONFormatter{})
+    } else {
+        logrus.SetFormatter(&logrus.TextFormatter{})
+    }
+    logrus.SetReportCaller(true)
+    logLevel, err := logrus.ParseLevel(s.LogOption.LogLevel)
+    if err != nil {
+        panic(err)
+    }
+    logrus.SetLevel(logLevel)
 }
 
 type LogOption struct {
-	LogLevel     string `env:""`
-	LogFormatter string `env:""`
+    LogLevel     string
+    LogFormatter string
 }
 
-func SetLogger(opts ...LogOption) gin.HandlerFunc {
+func LoggerHandler(opts ...LogOption) gin.HandlerFunc {
 
-	logger := defaultLogger()
-	if len(opts) != 0 {
-		if opts[0].LogFormatter == "json" {
-			logger.SetFormatter(&logrus.JSONFormatter{})
-		} else {
-			logger.SetFormatter(&logrus.TextFormatter{})
-		}
-		logLevel, err := logrus.ParseLevel(opts[0].LogLevel)
-		if err != nil {
-			panic(err)
-		}
-		logger.SetLevel(logLevel)
-	}
+    logger := defaultLogger()
+    if len(opts) != 0 {
+        if opts[0].LogFormatter == "json" {
+            logger.SetFormatter(&logrus.JSONFormatter{})
+        } else {
+            logger.SetFormatter(&logrus.TextFormatter{})
+        }
+        logLevel, err := logrus.ParseLevel(opts[0].LogLevel)
+        if err != nil {
+            panic(err)
+        }
+        logger.SetLevel(logLevel)
+    }
 
-	return func(c *gin.Context) {
-		startTime := time.Now()
-		traceID, spanID := traceAndSpanIDFromContext(c.Request.Context())
-		c.Next()
+    return func(c *gin.Context) {
+        startTime := time.Now()
+        traceID, spanID := traceAndSpanIDFromContext(c.Request.Context())
+        c.Next()
 
-		endTime := time.Now()
+        endTime := time.Now()
 
-		// status
-		statusCode := c.Writer.Status()
+        // status
+        statusCode := c.Writer.Status()
 
-		entry := logger.WithFields(logrus.Fields{
-			"tag":         "access",
-			"status":      statusCode,
-			"cost":        ReprOfDuration(endTime.Sub(startTime)),
-			"remote_ip":   c.ClientIP(),
-			"method":      c.Request.Method,
-			"request_url": c.Request.URL.String(),
-			"user_agent":  c.Request.UserAgent(),
-			"refer":       c.Request.Referer(),
-			"traceID":     traceID,
-			"spanID":      spanID,
-		})
+        entry := logger.WithFields(logrus.Fields{
+            "tag":         "access",
+            "status":      statusCode,
+            "cost":        ReprOfDuration(endTime.Sub(startTime)),
+            "remote_ip":   c.ClientIP(),
+            "method":      c.Request.Method,
+            "request_url": c.Request.URL.String(),
+            "user_agent":  c.Request.UserAgent(),
+            "refer":       c.Request.Referer(),
+            "traceID":     traceID,
+            "spanID":      spanID,
+        })
 
-		if statusCode >= http.StatusInternalServerError {
-			entry.Error()
-		} else if statusCode >= http.StatusBadRequest && statusCode < http.StatusInternalServerError {
-			entry.Warn()
-		} else {
-			entry.Info()
-		}
-	}
+        if statusCode >= http.StatusInternalServerError {
+            entry.Error()
+        } else if statusCode >= http.StatusBadRequest && statusCode < http.StatusInternalServerError {
+            entry.Warn()
+        } else {
+            entry.Info()
+        }
+    }
 }
