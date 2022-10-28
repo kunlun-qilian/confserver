@@ -5,6 +5,7 @@ go 1.17
 require (
 	github.com/gin-contrib/cors v1.3.1
 	github.com/gin-contrib/gzip v0.0.5
+	github.com/gin-contrib/pprof v1.4.0
 	github.com/gin-gonic/gin v1.8.1
 	github.com/go-courier/envconf v1.4.0
 	github.com/go-courier/httptransport v1.21.11
@@ -29,7 +30,6 @@ require (
 	github.com/PuerkitoBio/purell v1.1.1 // indirect
 	github.com/PuerkitoBio/urlesc v0.0.0-20170810143723-de5bf2ad4578 // indirect
 	github.com/fatih/color v1.12.0 // indirect
-	github.com/gin-contrib/pprof v1.4.0 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/go-courier/courier v1.5.0 // indirect
 	github.com/go-courier/logr v0.0.2 // indirect
