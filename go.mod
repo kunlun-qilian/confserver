@@ -9,7 +9,9 @@ require (
 	github.com/go-courier/envconf v1.4.0
 	github.com/go-courier/httptransport v1.21.11
 	github.com/go-courier/reflectx v1.3.5
+	github.com/go-courier/x v0.0.11
 	github.com/json-iterator/go v1.1.12
+	github.com/julienschmidt/httprouter v1.3.0
 	github.com/sirupsen/logrus v1.8.1
 	github.com/spf13/cobra v1.5.0
 	github.com/swaggo/files v0.0.0-20220610200504-28940afbdbfe
@@ -27,12 +29,12 @@ require (
 	github.com/PuerkitoBio/purell v1.1.1 // indirect
 	github.com/PuerkitoBio/urlesc v0.0.0-20170810143723-de5bf2ad4578 // indirect
 	github.com/fatih/color v1.12.0 // indirect
+	github.com/gin-contrib/pprof v1.4.0 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/go-courier/courier v1.5.0 // indirect
 	github.com/go-courier/logr v0.0.2 // indirect
 	github.com/go-courier/metax v1.3.0 // indirect
 	github.com/go-courier/statuserror v1.2.1 // indirect
-	github.com/go-courier/x v0.0.11 // indirect
 	github.com/go-logr/logr v1.2.3 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/go-openapi/jsonpointer v0.19.5 // indirect
@@ -46,7 +48,6 @@ require (
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/inconshreveable/mousetrap v1.0.0 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
-	github.com/julienschmidt/httprouter v1.3.0 // indirect
 	github.com/leodido/go-urn v1.2.1 // indirect
 	github.com/mailru/easyjson v0.7.6 // indirect
 	github.com/mattn/go-colorable v0.1.8 // indirect
