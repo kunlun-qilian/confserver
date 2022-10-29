@@ -3,11 +3,12 @@ package confserver
 import (
 	"context"
 	"fmt"
-	"github.com/gin-contrib/pprof"
 	"io/ioutil"
 	"os"
 	"strings"
 	"sync"
+
+	"github.com/gin-contrib/pprof"
 
 	"github.com/gin-contrib/gzip"
 	"github.com/gin-gonic/gin"
@@ -20,11 +21,11 @@ import (
 )
 
 type Server struct {
-	Port            int        `env:",opt,expose"`
-	LogOption       *LogOption `env:""`
-	Mode            string     `env:""`
-	HealthCheckPath string     `env:",opt,healthCheck"`
-	OpenAPISpec     string     `env:",opt,copy"`
+	Port            int       `env:",opt,expose"`
+	LogOption       LogOption `env:""`
+	Mode            string    `env:""`
+	HealthCheckPath string    `env:",opt,healthCheck"`
+	OpenAPISpec     string    `env:",opt,copy"`
 
 	r *gin.Engine
 
