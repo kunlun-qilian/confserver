@@ -3,56 +3,12 @@ package confserver
 import (
 	"github.com/sirupsen/logrus"
 	"net/http"
-	"os"
 	"time"
 
 	"github.com/gin-gonic/gin"
 )
 
-func defaultLogger() *logrus.Logger {
-	logger := logrus.New()
-	logger.SetFormatter(&logrus.JSONFormatter{})
-	logger.SetLevel(logrus.InfoLevel)
-	logger.Out = os.Stdout
-	gin.DefaultWriter = logger.Out
-	return logger
-}
-
-func (s *Server) SetLogger() {
-	if s.LogOption.LogFormatter == "json" {
-		logrus.SetFormatter(&logrus.JSONFormatter{})
-	} else {
-		logrus.SetFormatter(&logrus.TextFormatter{})
-	}
-	logrus.SetReportCaller(true)
-	logLevel, err := logrus.ParseLevel(s.LogOption.LogLevel)
-	if err != nil {
-		panic(err)
-	}
-	logrus.SetLevel(logLevel)
-}
-
-type LogOption struct {
-	LogLevel     string
-	LogFormatter string
-}
-
-func LoggerHandler(opts ...LogOption) gin.HandlerFunc {
-
-	logger := defaultLogger()
-	if len(opts) != 0 {
-		if opts[0].LogFormatter == "json" {
-			logger.SetFormatter(&logrus.JSONFormatter{})
-		} else {
-			logger.SetFormatter(&logrus.TextFormatter{})
-		}
-		logLevel, err := logrus.ParseLevel(opts[0].LogLevel)
-		if err != nil {
-			panic(err)
-		}
-		logger.SetLevel(logLevel)
-	}
-
+func LoggerHandler() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		startTime := time.Now()
 		traceID, spanID := traceAndSpanIDFromContext(c.Request.Context())
@@ -63,7 +19,7 @@ func LoggerHandler(opts ...LogOption) gin.HandlerFunc {
 		// status
 		statusCode := c.Writer.Status()
 
-		entry := logger.WithFields(logrus.Fields{
+		entry := logrus.WithFields(logrus.Fields{
 			"tag":         "access",
 			"status":      statusCode,
 			"cost":        ReprOfDuration(endTime.Sub(startTime)),

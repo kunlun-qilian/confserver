@@ -3,7 +3,8 @@ package confserver
 import (
 	"context"
 	"fmt"
-	"io/ioutil"
+	"io"
+	"net/http"
 	"os"
 	"strings"
 	"sync"
@@ -21,14 +22,11 @@ import (
 )
 
 type Server struct {
-	Port            int       `env:",opt,expose"`
-	LogOption       LogOption `env:""`
-	Mode            string    `env:""`
-	HealthCheckPath string    `env:",opt,healthCheck"`
-	OpenAPISpec     string    `env:",opt,copy"`
-
-	r *gin.Engine
-
+	Port            int    `env:",opt,expose"`
+	Mode            string `env:""`
+	HealthCheckPath string `env:",opt,healthCheck"`
+	OpenAPISpec     string `env:",opt,copy"`
+	r               *gin.Engine
 	// healthCheckUpdated
 	healthCheckUpdated bool
 }
@@ -40,13 +38,6 @@ func (s *Server) SetDefaults() {
 
 	if s.Mode == "" {
 		s.Mode = "release"
-	}
-
-	if s.LogOption.LogFormatter == "" {
-		s.LogOption.LogFormatter = "json"
-	}
-	if s.LogOption.LogLevel == "" {
-		s.LogOption.LogLevel = "debug"
 	}
 
 	gin.SetMode(s.Mode)
@@ -66,15 +57,12 @@ func (s *Server) SetDefaults() {
 }
 
 func (s *Server) Init() {
-
 	otp := otel.GetTracerProvider()
 	tp := sdktrace.NewTracerProvider(sdktrace.WithSampler(sdktrace.AlwaysSample()))
 	otel.SetTextMapPropagator(b3prop.New())
 	otel.SetTracerProvider(tp)
 
 	s.SetDefaults()
-	s.SetLogger()
-
 	s.r = gin.New()
 	// gzip
 	s.r.Use(gzip.Gzip(gzip.DefaultCompression))
@@ -148,9 +136,9 @@ func (s *Server) OpenapiHandler(ctx *gin.Context) {
 
 	var openapiByte []byte
 
-	contentByte, err := ioutil.ReadAll(file)
+	contentByte, err := io.ReadAll(file)
 	if err != nil {
-		ctx.Data(200, "text/plain; charset=utf-8", nil)
+		ctx.Data(http.StatusOK, "text/plain; charset=utf-8", nil)
 		return
 	}
 	openapiByte = contentByte
@@ -166,5 +154,5 @@ func (s *Server) OpenapiHandler(ctx *gin.Context) {
 		openapiByte = yamlByte
 	}
 
-	ctx.Data(200, "text/plain; charset=utf-8", openapiByte)
+	ctx.Data(http.StatusOK, "text/plain; charset=utf-8", openapiByte)
 }
