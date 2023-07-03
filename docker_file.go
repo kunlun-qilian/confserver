@@ -19,6 +19,7 @@ func (c *Configuration) dockerfile() []byte {
 	_, _ = fmt.Fprintln(dockerfile, `
 FROM build-env AS builder
 
+ARG GOPROXY=https://goproxy.cn,direct
 WORKDIR /go/src
 COPY ./ ./
 
