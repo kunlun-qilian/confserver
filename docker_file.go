@@ -9,9 +9,14 @@ import (
 func (c *Configuration) dockerfile() []byte {
 	dockerfile := bytes.NewBuffer(nil)
 
-	_, _ = fmt.Fprintln(dockerfile, `
-FROM docker.io/library/golang:1.17-buster AS build-env
+	buildImage := "dockerproxy.com/library/golang:1.19-buster"
+	if c.BuildImage != "" {
+		buildImage = c.BuildImage
+	}
 
+	_, _ = fmt.Fprintf(dockerfile, "FROM %s AS build-env\n", buildImage)
+
+	_, _ = fmt.Fprintln(dockerfile, `
 FROM build-env AS builder
 
 WORKDIR /go/src

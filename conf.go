@@ -29,6 +29,10 @@ func SetServiceName(serviceName string, rootDir string) {
 	config.projectRoot = filepath.Join(filepath.Dir(filename), rootDir)
 }
 
+func SetBuildImage(image string) {
+	config.BuildImage = image
+}
+
 func ConfP(c interface{}) {
 	tpe := reflect.TypeOf(c)
 	if tpe.Kind() != reflect.Ptr {
@@ -62,6 +66,7 @@ type Configuration struct {
 	projectRoot          string
 	ShouldGenerateConfig bool
 	defaultEnvVars       envconf.EnvVars
+	BuildImage           string
 }
 
 func (conf *Configuration) ProjectName() string {
