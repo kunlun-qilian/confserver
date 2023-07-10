@@ -26,6 +26,7 @@ type Server struct {
 	Mode            string `env:""`
 	HealthCheckPath string `env:",opt,healthCheck"`
 	OpenAPISpec     string `env:",opt,copy"`
+	UseH2C          bool   `env:""`
 	r               *gin.Engine
 	// healthCheckUpdated
 	healthCheckUpdated bool
@@ -64,6 +65,8 @@ func (s *Server) Init() {
 
 	s.SetDefaults()
 	s.r = gin.New()
+	// enable http2
+	s.r.UseH2C = s.UseH2C
 	// gzip
 	s.r.Use(gzip.Gzip(gzip.DefaultCompression))
 	// cors
@@ -88,7 +91,6 @@ func (s *Server) Engine() *gin.Engine {
 
 func (s *Server) serve(ctx context.Context) error {
 	return s.r.Run(fmt.Sprintf(":%d", s.Port))
-
 }
 
 func (s *Server) Serve(ctx context.Context, fn ...func(ctx context.Context) error) (err error) {
