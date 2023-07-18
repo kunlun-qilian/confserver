@@ -16,9 +16,7 @@ import (
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"go.opentelemetry.io/contrib/instrumentation/github.com/gin-gonic/gin/otelgin"
-	b3prop "go.opentelemetry.io/contrib/propagators/b3"
 	"go.opentelemetry.io/otel"
-	sdktrace "go.opentelemetry.io/otel/sdk/trace"
 )
 
 type Server struct {
@@ -30,6 +28,8 @@ type Server struct {
 	r               *gin.Engine
 	// healthCheckUpdated
 	healthCheckUpdated bool
+
+	//logr logr.Logger
 }
 
 func (s *Server) SetDefaults() {
@@ -58,12 +58,9 @@ func (s *Server) SetDefaults() {
 }
 
 func (s *Server) Init() {
-	otp := otel.GetTracerProvider()
-	tp := sdktrace.NewTracerProvider(sdktrace.WithSampler(sdktrace.AlwaysSample()))
-	otel.SetTextMapPropagator(b3prop.New())
-	otel.SetTracerProvider(tp)
-
 	s.SetDefaults()
+
+	tracer := otel.Tracer("Server")
 	s.r = gin.New()
 	// enable http2
 	s.r.UseH2C = s.UseH2C
@@ -72,9 +69,9 @@ func (s *Server) Init() {
 	// cors
 	s.r.Use(DefaultCORS())
 	// trace
-	s.r.Use(otelgin.Middleware(config.ServiceName(), otelgin.WithTracerProvider(otp)))
+	s.r.Use(otelgin.Middleware(config.ServiceName(), otelgin.WithTracerProvider(otel.GetTracerProvider())))
 	// log
-	s.r.Use(LoggerHandler())
+	s.r.Use(LoggerHandler(tracer))
 	// root
 	s.r.GET("/", s.RootHandler)
 	// openapi
