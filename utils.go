@@ -3,6 +3,7 @@ package confserver
 import (
 	"context"
 	"fmt"
+	"github.com/gin-gonic/gin"
 	jsoniter "github.com/json-iterator/go"
 	"go.opentelemetry.io/otel/trace"
 	"gopkg.in/yaml.v2"
@@ -57,4 +58,8 @@ func (p Password) SecurityString() string {
 		r = append(r, []rune("-")...)
 	}
 	return string(r)
+}
+
+func RequestContextFromGinContext(c *gin.Context) context.Context {
+	return c.Request.Context()
 }
