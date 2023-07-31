@@ -7,16 +7,14 @@ require (
 	github.com/gin-contrib/gzip v0.0.5
 	github.com/gin-contrib/pprof v1.4.0
 	github.com/gin-gonic/gin v1.9.1
-	github.com/go-courier/envconf v1.4.0
 	github.com/go-courier/httptransport v1.22.2
 	github.com/go-courier/logr v0.2.0
-	github.com/go-courier/reflectx v1.3.5
 	github.com/go-courier/x v0.1.2
 	github.com/json-iterator/go v1.1.12
 	github.com/julienschmidt/httprouter v1.3.0
 	github.com/kunlun-qilian/conflogger v0.1.0
+	github.com/kunlun-qilian/confx v0.0.1
 	github.com/sirupsen/logrus v1.9.3
-	github.com/spf13/cobra v1.5.0
 	github.com/swaggo/files v0.0.0-20220610200504-28940afbdbfe
 	github.com/swaggo/gin-swagger v1.5.0
 	go.opentelemetry.io/contrib/instrumentation/github.com/gin-gonic/gin/otelgin v0.42.0
@@ -36,7 +34,9 @@ require (
 	github.com/gabriel-vasile/mimetype v1.4.2 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/go-courier/courier v1.5.0 // indirect
+	github.com/go-courier/envconf v1.4.0 // indirect
 	github.com/go-courier/metax v1.3.0 // indirect
+	github.com/go-courier/reflectx v1.3.5 // indirect
 	github.com/go-courier/statuserror v1.2.1 // indirect
 	github.com/go-logr/logr v1.2.4 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
@@ -49,7 +49,7 @@ require (
 	github.com/go-playground/validator/v10 v10.14.0 // indirect
 	github.com/goccy/go-json v0.10.2 // indirect
 	github.com/google/uuid v1.3.0 // indirect
-	github.com/inconshreveable/mousetrap v1.0.0 // indirect
+	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/klauspost/cpuid/v2 v2.2.4 // indirect
 	github.com/leodido/go-urn v1.2.4 // indirect
@@ -60,6 +60,7 @@ require (
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/pelletier/go-toml/v2 v2.0.8 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
+	github.com/spf13/cobra v1.7.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/swaggo/swag v1.8.1 // indirect
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect

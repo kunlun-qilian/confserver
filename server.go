@@ -13,6 +13,7 @@ import (
 
 	"github.com/gin-contrib/gzip"
 	"github.com/gin-gonic/gin"
+	"github.com/kunlun-qilian/confx"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"go.opentelemetry.io/contrib/instrumentation/github.com/gin-gonic/gin/otelgin"
@@ -28,8 +29,6 @@ type Server struct {
 	r               *gin.Engine
 	// healthCheckUpdated
 	healthCheckUpdated bool
-
-	//logr logr.Logger
 }
 
 func (s *Server) SetDefaults() {
@@ -69,13 +68,13 @@ func (s *Server) Init() {
 	// cors
 	s.r.Use(DefaultCORS())
 	// trace
-	s.r.Use(otelgin.Middleware(config.ServiceName(), otelgin.WithTracerProvider(otel.GetTracerProvider())))
+	s.r.Use(otelgin.Middleware(confx.Config.ServiceName(), otelgin.WithTracerProvider(otel.GetTracerProvider())))
 	// log
 	s.r.Use(LoggerHandler(tracer))
 	// root
 	s.r.GET("/", s.RootHandler)
 	// openapi
-	s.r.GET(fmt.Sprintf("/%s", strings.TrimPrefix(config.ServiceName(), "srv-")), s.OpenapiHandler)
+	s.r.GET(fmt.Sprintf("/%s", strings.TrimPrefix(confx.Config.ServiceName(), "srv-")), s.OpenapiHandler)
 	if strings.ToLower(s.Mode) == "debug" {
 		s.r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 		pprof.Register(s.r)
@@ -115,11 +114,11 @@ func (s *Server) Serve(ctx context.Context, fn ...func(ctx context.Context) erro
 }
 
 func (s *Server) SvcRootRouter() *gin.RouterGroup {
-	return s.r.Group(svcRouterPath)
+	return s.r.Group(confx.RootPath)
 }
 
 func (s *Server) RootHandler(ctx *gin.Context) {
-	ctx.Data(200, "text/plain; charset=utf-8", []byte(config.ServiceName()))
+	ctx.Data(200, "text/plain; charset=utf-8", []byte(confx.Config.ServiceName()))
 }
 
 func (s *Server) OpenapiHandler(ctx *gin.Context) {
