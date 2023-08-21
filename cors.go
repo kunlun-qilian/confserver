@@ -13,6 +13,7 @@ const (
 	corsContentLanguageHeader       string = "Content-Language"
 	corsOriginHeader                string = "Origin"
 	corsVaryHeader                  string = "Vary"
+	corsAuthorizationHeader         string = "Authorization"
 
 	corsAllowOriginHeader      string = "Access-Control-Allow-Origin"
 	corsExposeHeadersHeader    string = "Access-Control-Expose-Headers"
@@ -32,6 +33,7 @@ var (
 		corsContentLanguageHeader,
 		corsOriginHeader,
 		corsVaryHeader,
+		corsAuthorizationHeader,
 		corsAllowOriginHeader,
 		corsExposeHeadersHeader,
 		corsMaxAgeHeader,
