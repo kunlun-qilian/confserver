@@ -26,6 +26,7 @@ type Server struct {
 	HealthCheckPath string `env:",opt,healthCheck"`
 	OpenAPISpec     string `env:",opt,copy"`
 	UseH2C          bool   `env:""`
+	CorsCheck       bool   `env:""`
 	r               *gin.Engine
 	// healthCheckUpdated
 	healthCheckUpdated bool
@@ -66,7 +67,9 @@ func (s *Server) Init() {
 	// gzip
 	s.r.Use(gzip.Gzip(gzip.DefaultCompression))
 	// cors
-	s.r.Use(DefaultCORS())
+	if s.CorsCheck {
+		s.r.Use(DefaultCORS())
+	}
 	// trace
 	s.r.Use(otelgin.Middleware(confx.Config.ServiceName(), otelgin.WithTracerProvider(otel.GetTracerProvider())))
 	// log
