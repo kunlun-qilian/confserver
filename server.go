@@ -3,6 +3,7 @@ package confserver
 import (
 	"context"
 	"fmt"
+	"github.com/gin-contrib/gzip"
 	"io"
 	"net/http"
 	"os"
@@ -11,7 +12,6 @@ import (
 
 	"github.com/gin-contrib/pprof"
 
-	"github.com/gin-contrib/gzip"
 	"github.com/gin-gonic/gin"
 	"github.com/kunlun-qilian/confx"
 	swaggerFiles "github.com/swaggo/files"
@@ -27,7 +27,9 @@ type Server struct {
 	OpenAPISpec     string `env:",opt,copy"`
 	UseH2C          bool   `env:""`
 	CorsCheck       bool   `env:""`
-	r               *gin.Engine
+	// 流式返回 取消压缩
+	Stream bool `env:""`
+	r      *gin.Engine
 	// healthCheckUpdated
 	healthCheckUpdated bool
 }
@@ -65,7 +67,10 @@ func (s *Server) Init() {
 	// enable http2
 	s.r.UseH2C = s.UseH2C
 	// gzip
-	s.r.Use(gzip.Gzip(gzip.DefaultCompression))
+	// 流式返回 取消压缩
+	if !s.Stream {
+		s.r.Use(gzip.Gzip(gzip.DefaultCompression))
+	}
 	// cors
 	if s.CorsCheck {
 		s.r.Use(DefaultCORS())
