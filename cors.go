@@ -9,6 +9,7 @@ import (
 const (
 	corsAcceptHeader                string = "Accept"
 	corsAcceptContentLanguageHeader string = "Accept-Language"
+	corsContentContentTypeHeader    string = "Content-Type"
 	corsContentLanguageHeader       string = "Content-Language"
 	corsContentLengthHeader         string = "Content-Length"
 	corsOriginHeader                string = "Origin"
@@ -28,6 +29,7 @@ const (
 var (
 	defaultCorsMethods = []string{"GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"}
 	defaultCorsHeaders = []string{
+		corsContentContentTypeHeader,
 		corsAcceptHeader,
 		corsContentLengthHeader,
 		corsAcceptContentLanguageHeader,
