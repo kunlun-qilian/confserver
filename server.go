@@ -74,11 +74,11 @@ func (s *Server) Init() {
 	}
 	// cors
 	if s.CorsCheck {
-		s.r.Use(AllHeaderCORS())
-	} else {
 		s.r.Use(DefaultCORS())
-
+	} else {
+		s.r.Use(AllowAllCors())
 	}
+
 	// trace
 	s.r.Use(otelgin.Middleware(confx.Config.ServiceName(), otelgin.WithTracerProvider(otel.GetTracerProvider())))
 	// log
@@ -163,6 +163,5 @@ func (s *Server) OpenapiHandler(ctx *gin.Context) {
 		}
 		openapiByte = yamlByte
 	}
-
 	ctx.Data(http.StatusOK, "text/plain; charset=utf-8", openapiByte)
 }

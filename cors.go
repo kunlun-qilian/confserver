@@ -1,16 +1,16 @@
 package confserver
 
 import (
-	"time"
-
-	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"net/http"
+	"strings"
 )
 
 const (
 	corsAcceptHeader                string = "Accept"
 	corsAcceptContentLanguageHeader string = "Accept-Language"
 	corsContentLanguageHeader       string = "Content-Language"
+	corsContentLengthHeader         string = "Content-Length"
 	corsOriginHeader                string = "Origin"
 	corsVaryHeader                  string = "Vary"
 	corsAuthorizationHeader         string = "Authorization"
@@ -29,6 +29,7 @@ var (
 	defaultCorsMethods = []string{"GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"}
 	defaultCorsHeaders = []string{
 		corsAcceptHeader,
+		corsContentLengthHeader,
 		corsAcceptContentLanguageHeader,
 		corsContentLanguageHeader,
 		corsOriginHeader,
@@ -45,34 +46,32 @@ var (
 	}
 )
 
-func DefaultConfig() cors.Config {
-	return cors.Config{
-		AllowAllOrigins:  true,
-		AllowMethods:     defaultCorsMethods,
-		AllowHeaders:     defaultCorsHeaders,
-		AllowCredentials: true,
-		MaxAge:           12 * time.Hour,
-	}
-}
-
 func DefaultCORS() gin.HandlerFunc {
-	return cors.New(
-		DefaultConfig(),
-	)
-}
-
-func AllHeaderConfig() cors.Config {
-	return cors.Config{
-		AllowAllOrigins:  true,
-		AllowMethods:     defaultCorsMethods,
-		AllowHeaders:     []string{"*"},
-		AllowCredentials: true,
-		MaxAge:           12 * time.Hour,
+	return func(c *gin.Context) {
+		c.Header("Access-Control-Allow-Origin", "*")
+		c.Header("Access-Control-Allow-Methods", strings.Join(defaultCorsMethods, ","))
+		c.Header("Access-Control-Allow-Headers", strings.Join(defaultCorsHeaders, ","))
+		c.Header("Access-Control-Expose-Headers", "Content-Length")
+		c.Header("Access-Control-Allow-Credentials", "true")
+		if c.Request.Method == "OPTIONS" {
+			c.AbortWithStatus(http.StatusNoContent)
+			return
+		}
+		c.Next()
 	}
 }
 
-func AllHeaderCORS() gin.HandlerFunc {
-	return cors.New(
-		AllHeaderConfig(),
-	)
+func AllowAllCors() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		c.Header("Access-Control-Allow-Origin", "*")
+		c.Header("Access-Control-Allow-Methods", "*")
+		c.Header("Access-Control-Allow-Headers", "*")
+		c.Header("Access-Control-Expose-Headers", "*")
+		c.Header("Access-Control-Allow-Credentials", "true")
+		if c.Request.Method == "OPTIONS" {
+			c.AbortWithStatus(http.StatusNoContent)
+			return
+		}
+		c.Next()
+	}
 }
