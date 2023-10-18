@@ -60,3 +60,19 @@ func DefaultCORS() gin.HandlerFunc {
 		DefaultConfig(),
 	)
 }
+
+func AllHeaderConfig() cors.Config {
+	return cors.Config{
+		AllowAllOrigins:  true,
+		AllowMethods:     defaultCorsMethods,
+		AllowHeaders:     []string{"*"},
+		AllowCredentials: true,
+		MaxAge:           12 * time.Hour,
+	}
+}
+
+func AllHeaderCORS() gin.HandlerFunc {
+	return cors.New(
+		AllHeaderConfig(),
+	)
+}
