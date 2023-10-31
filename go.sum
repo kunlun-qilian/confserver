@@ -146,6 +146,8 @@ github.com/kunlun-qilian/conflogger v0.1.0 h1:UB84DBuNsMtM2Ix8Bk44SJqWJqEXfldCHz
 github.com/kunlun-qilian/conflogger v0.1.0/go.mod h1:RABiG3GxcT9b1Hqg5RCvy36BAwjlIerDKunFGWu8MdQ=
 github.com/kunlun-qilian/confx v0.0.1 h1:q41Jx5G7nH/RrXDIcB0fmP0qXPoSDrUC4IDMjh2t4Zg=
 github.com/kunlun-qilian/confx v0.0.1/go.mod h1:hdZpU6NEG7j2KLWKITknVafUcqrKkv2j1eiRfktquK8=
+github.com/kunlun-qilian/trace v0.0.1 h1:yAY/43ir3bdGwLjd2Nl2GYuY39ESFWabrZmzeCO9M6M=
+github.com/kunlun-qilian/trace v0.0.1/go.mod h1:DdsyF0S+89p28Unqg5DdYrF60ZJyeHPUX7rE+D/SC7o=
 github.com/leodido/go-urn v1.1.0/go.mod h1:+cyI34gQWZcE1eQU7NVgKkkzdXDQHr1dBMtdAPozLkw=
 github.com/leodido/go-urn v1.2.0/go.mod h1:+8+nEpDfqqsY+g338gtMEUOtuK+4dEMhiQEgxpxOKII=
 github.com/leodido/go-urn v1.2.1/go.mod h1:zt4jvISO2HfUBqxjfIshjdMTYS56ZS/qv49ictyFfxY=
@@ -249,6 +251,8 @@ go.opentelemetry.io/contrib/propagators/b3 v1.17.0 h1:ImOVvHnku8jijXqkwCSyYKRDt2
 go.opentelemetry.io/contrib/propagators/b3 v1.17.0/go.mod h1:IkfUfMpKWmynvvE0264trz0sf32NRTZL4nuAN9AbWRc=
 go.opentelemetry.io/otel v1.16.0 h1:Z7GVAX/UkAXPKsy94IU+i6thsQS4nb7LviLpnaNeW8s=
 go.opentelemetry.io/otel v1.16.0/go.mod h1:vl0h9NUa1D5s1nv3A5vZOYWn8av4K8Ml6JDeHrT/bx4=
+go.opentelemetry.io/otel/exporters/jaeger v1.9.0 h1:gAEgEVGDWwFjcis9jJTOJqZNxDzoZfR12WNIxr7g9Ww=
+go.opentelemetry.io/otel/exporters/jaeger v1.9.0/go.mod h1:hquezOLVAybNW6vanIxkdLXTXvzlj2Vn3wevSP15RYs=
 go.opentelemetry.io/otel/metric v1.16.0 h1:RbrpwVG1Hfv85LgnZ7+txXioPDoh6EdbZHo26Q3hqOo=
 go.opentelemetry.io/otel/metric v1.16.0/go.mod h1:QE47cpOmkwipPiefDwo2wDzwJrlfxxNYodqc4xnGCo4=
 go.opentelemetry.io/otel/sdk v1.16.0 h1:Z1Ok1YsijYL0CSJpHt4cS3wDDh7p572grzNrBMiMWgE=

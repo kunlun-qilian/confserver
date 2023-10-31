@@ -1,10 +1,12 @@
 package confserver
 
 import (
+	"context"
 	"errors"
 	"github.com/gin-gonic/gin"
 	"github.com/go-courier/logr"
 	"github.com/kunlun-qilian/conflogger"
+	trace2 "github.com/kunlun-qilian/trace"
 	"github.com/sirupsen/logrus"
 	"go.opentelemetry.io/contrib/propagators/b3"
 	"go.opentelemetry.io/otel/propagation"
@@ -29,10 +31,11 @@ func LoggerHandler(tracer trace.Tracer) gin.HandlerFunc {
 
 		log := conflogger.SpanLogger(span)
 		ctx = logr.WithLogger(ctx, log)
-		c.Request = c.Request.WithContext(ctx)
+
+		// inject trace span
+		c.Request = c.Request.WithContext(context.WithValue(ctx, trace2.ContextTraceSpanKey, trace2.NewSpan(ctx, span)))
 
 		traceID, spanID := traceAndSpanIDFromContext(c.Request.Context())
-
 		c.Next()
 
 		endTime := time.Now()

@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/gin-contrib/gzip"
+	"go.opentelemetry.io/contrib/instrumentation/github.com/gin-gonic/gin/otelgin"
 	"io"
 	"net/http"
 	"os"
@@ -16,7 +17,6 @@ import (
 	"github.com/kunlun-qilian/confx"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
-	"go.opentelemetry.io/contrib/instrumentation/github.com/gin-gonic/gin/otelgin"
 	"go.opentelemetry.io/otel"
 )
 
