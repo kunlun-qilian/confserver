@@ -4,8 +4,6 @@ import (
 	"context"
 	"errors"
 	"github.com/gin-gonic/gin"
-	"github.com/go-courier/logr"
-	"github.com/kunlun-qilian/conflogger"
 	trace2 "github.com/kunlun-qilian/trace"
 	"github.com/sirupsen/logrus"
 	"go.opentelemetry.io/contrib/propagators/b3"
@@ -18,22 +16,17 @@ import (
 
 func LoggerHandler(tracer trace.Tracer) gin.HandlerFunc {
 	return func(c *gin.Context) {
-
-		ctx := c.Request.Context()
-		ctx = b3.New().Extract(ctx, propagation.HeaderCarrier(c.Request.Header))
-
 		startTime := time.Now()
 
-		ctx, span := tracer.Start(ctx, c.FullPath(), trace.WithTimestamp(startTime))
+		ctx := c.Request.Context()
+		b3Ctx := b3.New().Extract(ctx, propagation.HeaderCarrier(c.Request.Header))
+		span := trace2.Start(b3Ctx, c.FullPath(), trace.WithTimestamp(startTime))
 		defer func() {
-			span.End(trace.WithTimestamp(time.Now()))
+			span.End()
 		}()
 
-		log := conflogger.SpanLogger(span)
-		ctx = logr.WithLogger(ctx, log)
-
-		// inject trace span
-		c.Request = c.Request.WithContext(context.WithValue(ctx, trace2.ContextTraceSpanKey, trace2.NewSpan(ctx, span)))
+		//// inject trace span
+		c.Request = c.Request.WithContext(context.WithValue(span.Context(), trace2.ContextTraceSpanKey, span))
 
 		traceID, spanID := traceAndSpanIDFromContext(c.Request.Context())
 		c.Next()
