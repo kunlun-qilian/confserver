@@ -4,6 +4,8 @@ import (
 	"context"
 	"errors"
 	"github.com/gin-gonic/gin"
+	"github.com/go-courier/logr"
+	"github.com/kunlun-qilian/conflogger"
 	trace2 "github.com/kunlun-qilian/trace"
 	"github.com/sirupsen/logrus"
 	"go.opentelemetry.io/contrib/propagators/b3"
@@ -25,10 +27,13 @@ func LoggerHandler(tracer trace.Tracer) gin.HandlerFunc {
 			span.End()
 		}()
 
-		//// inject trace span
-		c.Request = c.Request.WithContext(context.WithValue(span.Context(), trace2.ContextTraceSpanKey, span))
+		log := conflogger.SpanLogger(span.TraceSpan())
+		ctx = logr.WithLogger(ctx, log)
 
+		// inject trace span
+		c.Request = c.Request.WithContext(context.WithValue(ctx, trace2.ContextTraceSpanKey, span))
 		traceID, spanID := traceAndSpanIDFromContext(c.Request.Context())
+
 		c.Next()
 
 		endTime := time.Now()
@@ -51,10 +56,13 @@ func LoggerHandler(tracer trace.Tracer) gin.HandlerFunc {
 
 		if statusCode >= http.StatusInternalServerError {
 			entry.Error()
+			log.WithValues(entry).Error(nil)
 		} else if statusCode >= http.StatusBadRequest && statusCode < http.StatusInternalServerError {
 			entry.Warn()
+			log.WithValues(entry).Warn(nil)
 		} else {
 			entry.Info()
+			log.WithValues(entry).Info("")
 		}
 	}
 }

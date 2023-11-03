@@ -7,11 +7,13 @@ require (
 	github.com/gin-contrib/pprof v1.4.0
 	github.com/gin-gonic/gin v1.9.1
 	github.com/go-courier/httptransport v1.22.2
+	github.com/go-courier/logr v0.3.0
 	github.com/go-courier/x v0.1.2
 	github.com/json-iterator/go v1.1.12
 	github.com/julienschmidt/httprouter v1.3.0
+	github.com/kunlun-qilian/conflogger v0.2.0
 	github.com/kunlun-qilian/confx v0.0.1
-	github.com/kunlun-qilian/trace v0.0.2
+	github.com/kunlun-qilian/trace v0.0.4
 	github.com/sirupsen/logrus v1.9.3
 	github.com/swaggo/files v0.0.0-20220610200504-28940afbdbfe
 	github.com/swaggo/gin-swagger v1.5.0
@@ -33,7 +35,6 @@ require (
 	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/go-courier/courier v1.5.0 // indirect
 	github.com/go-courier/envconf v1.4.0 // indirect
-	github.com/go-courier/logr v0.2.0 // indirect
 	github.com/go-courier/metax v1.3.0 // indirect
 	github.com/go-courier/reflectx v1.3.5 // indirect
 	github.com/go-courier/statuserror v1.2.1 // indirect
@@ -68,12 +69,13 @@ require (
 	go.opentelemetry.io/otel/metric v1.19.0 // indirect
 	go.opentelemetry.io/otel/sdk v1.19.0 // indirect
 	golang.org/x/arch v0.3.0 // indirect
-	golang.org/x/crypto v0.9.0 // indirect
-	golang.org/x/mod v0.10.0 // indirect
-	golang.org/x/net v0.10.0 // indirect
-	golang.org/x/sys v0.12.0 // indirect
-	golang.org/x/text v0.9.0 // indirect
-	golang.org/x/tools v0.9.1 // indirect
+	golang.org/x/crypto v0.14.0 // indirect
+	golang.org/x/exp v0.0.0-20231006140011-7918f672742d // indirect
+	golang.org/x/mod v0.13.0 // indirect
+	golang.org/x/net v0.16.0 // indirect
+	golang.org/x/sys v0.13.0 // indirect
+	golang.org/x/text v0.13.0 // indirect
+	golang.org/x/tools v0.14.0 // indirect
 	google.golang.org/protobuf v1.30.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
