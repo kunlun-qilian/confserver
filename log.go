@@ -56,15 +56,25 @@ func LoggerHandler(tracer trace.Tracer) gin.HandlerFunc {
 
 		if statusCode >= http.StatusInternalServerError {
 			entry.Error()
-			log.WithValues(entry).Error(nil)
+			log.WithValues(convertLogFields(entry.Data)...).Error(nil)
 		} else if statusCode >= http.StatusBadRequest && statusCode < http.StatusInternalServerError {
 			entry.Warn()
-			log.WithValues(entry).Warn(nil)
+			log.WithValues(convertLogFields(entry.Data)...).Warn(nil)
 		} else {
 			entry.Info()
-			log.WithValues(entry).Info("")
+			log.WithValues(convertLogFields(entry.Data)...).Info("")
 		}
 	}
+}
+
+func convertLogFields(fields logrus.Fields) []interface{} {
+
+	var logFields []interface{}
+	for k, v := range fields {
+		logFields = append(logFields, k)
+		logFields = append(logFields, v)
+	}
+	return logFields
 }
 
 func newLoggerResponseWriter(rw http.ResponseWriter) *loggerResponseWriter {
