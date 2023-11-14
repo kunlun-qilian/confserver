@@ -16,10 +16,13 @@ import (
 	"time"
 )
 
-func LoggerHandler(tracer trace.Tracer) gin.HandlerFunc {
+func TraceHandler() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		startTime := time.Now()
+		if c.FullPath() == "/" || c.FullPath() == "/swagger/*any" {
+			return
+		}
 
+		startTime := time.Now()
 		ctx := c.Request.Context()
 		b3Ctx := b3.New().Extract(ctx, propagation.HeaderCarrier(c.Request.Header))
 		span := trace2.Start(b3Ctx, c.FullPath(), trace.WithTimestamp(startTime))
@@ -55,14 +58,46 @@ func LoggerHandler(tracer trace.Tracer) gin.HandlerFunc {
 		})
 
 		if statusCode >= http.StatusInternalServerError {
-			entry.Error()
 			log.WithValues(convertLogFields(entry.Data)...).Error(nil)
 		} else if statusCode >= http.StatusBadRequest && statusCode < http.StatusInternalServerError {
-			entry.Warn()
 			log.WithValues(convertLogFields(entry.Data)...).Warn(nil)
 		} else {
-			entry.Info()
 			log.WithValues(convertLogFields(entry.Data)...).Info("")
+		}
+	}
+}
+
+func LoggerHandler() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		startTime := time.Now()
+
+		c.Next()
+
+		endTime := time.Now()
+		traceID, spanID := traceAndSpanIDFromContext(c.Request.Context())
+
+		// status
+		statusCode := c.Writer.Status()
+
+		entry := logrus.WithFields(logrus.Fields{
+			"tag":         "access",
+			"status":      statusCode,
+			"cost":        ReprOfDuration(endTime.Sub(startTime)),
+			"remote_ip":   c.ClientIP(),
+			"method":      c.Request.Method,
+			"request_url": c.Request.URL.String(),
+			"user_agent":  c.Request.UserAgent(),
+			"refer":       c.Request.Referer(),
+			"traceID":     traceID,
+			"spanID":      spanID,
+		})
+
+		if statusCode >= http.StatusInternalServerError {
+			entry.Error()
+		} else if statusCode >= http.StatusBadRequest && statusCode < http.StatusInternalServerError {
+			entry.Warn()
+		} else {
+			entry.Info()
 		}
 	}
 }

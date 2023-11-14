@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"github.com/gin-contrib/gzip"
-	"go.opentelemetry.io/contrib/instrumentation/github.com/gin-gonic/gin/otelgin"
 	"io"
 	"net/http"
 	"os"
@@ -17,7 +16,6 @@ import (
 	"github.com/kunlun-qilian/confx"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
-	"go.opentelemetry.io/otel"
 )
 
 type Server struct {
@@ -63,7 +61,7 @@ func (s *Server) SetDefaults() {
 func (s *Server) Init() {
 	s.SetDefaults()
 
-	tracer := otel.Tracer("Server")
+	//tracer := otel.Tracer("Server")
 	s.r = gin.New()
 	// enable http2
 	s.r.UseH2C = s.UseH2C
@@ -79,10 +77,11 @@ func (s *Server) Init() {
 		s.r.Use(AllowAllCors())
 	}
 
-	// trace
-	s.r.Use(otelgin.Middleware(confx.Config.ServiceName(), otelgin.WithTracerProvider(otel.GetTracerProvider())))
 	// log
-	s.r.Use(LoggerHandler(tracer))
+	s.r.Use(LoggerHandler())
+	// trace
+	s.r.Use(TraceHandler())
+
 	// root
 	s.r.GET("/", s.RootHandler)
 	// openapi
