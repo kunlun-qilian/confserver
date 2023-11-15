@@ -32,6 +32,9 @@ func traceAndSpanIDFromContext(ctx context.Context) (string, string) {
 
 func traceIDFromContext(ctx context.Context) string {
 	span := ktrace.GetTraceSpanFromContext(ctx)
+	if span == nil {
+		return ""
+	}
 	spanCtx := trace.SpanContextFromContext(span.Context())
 	if spanCtx.HasTraceID() {
 		return spanCtx.TraceID().String()
@@ -41,6 +44,9 @@ func traceIDFromContext(ctx context.Context) string {
 
 func spanIDFromContext(ctx context.Context) string {
 	span := ktrace.GetTraceSpanFromContext(ctx)
+	if span == nil {
+		return ""
+	}
 	spanCtx := trace.SpanContextFromContext(span.Context())
 	if spanCtx.HasSpanID() {
 		return spanCtx.SpanID().String()
