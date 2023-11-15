@@ -13,7 +13,7 @@ require (
 	github.com/julienschmidt/httprouter v1.3.0
 	github.com/kunlun-qilian/conflogger v0.2.0
 	github.com/kunlun-qilian/confx v0.0.1
-	github.com/kunlun-qilian/trace v0.3.0
+	github.com/kunlun-qilian/trace v0.3.1
 	github.com/sirupsen/logrus v1.9.3
 	github.com/swaggo/files v0.0.0-20220610200504-28940afbdbfe
 	github.com/swaggo/gin-swagger v1.5.0

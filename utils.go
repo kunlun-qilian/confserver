@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	jsoniter "github.com/json-iterator/go"
+	ktrace "github.com/kunlun-qilian/trace"
 	"go.opentelemetry.io/otel/trace"
 	"gopkg.in/yaml.v2"
 	"time"
@@ -26,20 +27,21 @@ func JSONToYAML(j []byte) ([]byte, error) {
 }
 
 func traceAndSpanIDFromContext(ctx context.Context) (string, string) {
-	return traceIdFromContext(ctx), spanIdFromContext(ctx)
+	return traceIDFromContext(ctx), spanIDFromContext(ctx)
 }
 
-func traceIdFromContext(ctx context.Context) string {
-
-	spanCtx := trace.SpanContextFromContext(ctx)
+func traceIDFromContext(ctx context.Context) string {
+	span := ktrace.GetTraceSpanFromContext(ctx)
+	spanCtx := trace.SpanContextFromContext(span.Context())
 	if spanCtx.HasTraceID() {
 		return spanCtx.TraceID().String()
 	}
 	return ""
 }
 
-func spanIdFromContext(ctx context.Context) string {
-	spanCtx := trace.SpanContextFromContext(ctx)
+func spanIDFromContext(ctx context.Context) string {
+	span := ktrace.GetTraceSpanFromContext(ctx)
+	spanCtx := trace.SpanContextFromContext(span.Context())
 	if spanCtx.HasSpanID() {
 		return spanCtx.SpanID().String()
 	}
