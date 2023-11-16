@@ -3,6 +3,7 @@ package confserver
 import (
 	"context"
 	"errors"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/go-courier/logr"
 	"github.com/kunlun-qilian/conflogger"
@@ -58,9 +59,9 @@ func TraceHandler() gin.HandlerFunc {
 		})
 
 		if statusCode >= http.StatusInternalServerError {
-			log.WithValues(convertLogFields(entry.Data)...).Error(nil)
+			log.WithValues(convertLogFields(entry.Data)...).Error(fmt.Errorf("error status code:%d", statusCode))
 		} else if statusCode >= http.StatusBadRequest && statusCode < http.StatusInternalServerError {
-			log.WithValues(convertLogFields(entry.Data)...).Warn(nil)
+			log.WithValues(convertLogFields(entry.Data)...).Warn(fmt.Errorf("warn status code:%d", statusCode))
 		} else {
 			log.WithValues(convertLogFields(entry.Data)...).Info("")
 		}
