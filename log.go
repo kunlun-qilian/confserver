@@ -26,7 +26,7 @@ func TraceHandler() gin.HandlerFunc {
 		startTime := time.Now()
 		ctx := c.Request.Context()
 		b3Ctx := b3.New().Extract(ctx, propagation.HeaderCarrier(c.Request.Header))
-		span := trace2.Start(b3Ctx, c.FullPath(), trace.WithTimestamp(startTime))
+		span := trace2.Start(b3Ctx, c.FullPath(), trace.WithTimestamp(startTime), trace.WithSpanKind(trace.SpanKindServer))
 		defer func() {
 			span.End()
 		}()
