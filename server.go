@@ -3,12 +3,13 @@ package confserver
 import (
 	"context"
 	"fmt"
-	"github.com/gin-contrib/gzip"
 	"io"
 	"net/http"
 	"os"
 	"strings"
 	"sync"
+
+	"github.com/gin-contrib/gzip"
 
 	"github.com/gin-contrib/pprof"
 

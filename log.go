@@ -3,7 +3,10 @@ package confserver
 import (
 	"context"
 	"errors"
-	"fmt"
+	"net/http"
+	"net/url"
+	"time"
+
 	"github.com/gin-gonic/gin"
 	"github.com/go-courier/logr"
 	"github.com/kunlun-qilian/conflogger"
@@ -12,9 +15,6 @@ import (
 	"go.opentelemetry.io/contrib/propagators/b3"
 	"go.opentelemetry.io/otel/propagation"
 	"go.opentelemetry.io/otel/trace"
-	"net/http"
-	"net/url"
-	"time"
 )
 
 func TraceHandler() gin.HandlerFunc {
@@ -31,40 +31,42 @@ func TraceHandler() gin.HandlerFunc {
 			span.End()
 		}()
 
-		log := conflogger.SpanLogger(span.TraceSpan())
-		ctx = logr.WithLogger(ctx, log)
+		ctx = logr.WithLogger(ctx, conflogger.StdLogger())
 
 		// inject trace span
-		c.Request = c.Request.WithContext(context.WithValue(ctx, trace2.ContextTraceSpanKey, span))
-		traceID, spanID := traceAndSpanIDFromContext(c.Request.Context())
+		c.Request = c.Request.WithContext(context.WithValue(ctx, trace2.ContextTraceSpan{}, span))
+		// traceID, spanID := traceAndSpanIDFromContext(c.Request.Context())
 
 		c.Next()
 
-		endTime := time.Now()
+		// endTime := time.Now()
 
-		// status
-		statusCode := c.Writer.Status()
+		// // status
+		// statusCode := c.Writer.Status()
 
-		entry := logrus.WithFields(logrus.Fields{
-			"tag":         "access",
-			"status":      statusCode,
-			"cost":        ReprOfDuration(endTime.Sub(startTime)),
-			"remote_ip":   c.ClientIP(),
-			"method":      c.Request.Method,
-			"request_url": c.Request.URL.String(),
-			"user_agent":  c.Request.UserAgent(),
-			"refer":       c.Request.Referer(),
-			"traceID":     traceID,
-			"spanID":      spanID,
-		})
+		// entry := logrus.WithFields(logrus.Fields{
+		// 	"tag":         "access",
+		// 	"status":      statusCode,
+		// 	"cost":        ReprOfDuration(endTime.Sub(startTime)),
+		// 	"remote_ip":   c.ClientIP(),
+		// 	"method":      c.Request.Method,
+		// 	"request_url": c.Request.URL.String(),
+		// 	"user_agent":  c.Request.UserAgent(),
+		// 	"refer":       c.Request.Referer(),
+		// 	"traceID":     traceID,
+		// 	"spanID":      spanID,
+		// })
 
-		if statusCode >= http.StatusInternalServerError {
-			log.WithValues(convertLogFields(entry.Data)...).Error(fmt.Errorf("error status code:%d", statusCode))
-		} else if statusCode >= http.StatusBadRequest && statusCode < http.StatusInternalServerError {
-			log.WithValues(convertLogFields(entry.Data)...).Warn(fmt.Errorf("warn status code:%d", statusCode))
-		} else {
-			log.WithValues(convertLogFields(entry.Data)...).Info("")
-		}
+		// if statusCode >= http.StatusInternalServerError {
+		// 	// log.WithValues(convertLogFields(entry.Data)...).Error(fmt.Errorf("error status code:%d", statusCode))
+		// 	entry.Error()
+		// } else if statusCode >= http.StatusBadRequest && statusCode < http.StatusInternalServerError {
+		// 	// log.WithValues(convertLogFields(entry.Data)...).Warn(fmt.Errorf("warn status code:%d", statusCode))
+		// 	entry.Warn()
+		// } else {
+		// 	entry.Info()
+		// 	// log.WithValues(convertLogFields(entry.Data)...).Info("")
+		// }
 	}
 }
 

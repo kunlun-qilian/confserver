@@ -3,12 +3,13 @@ package confserver
 import (
 	"context"
 	"fmt"
+	"time"
+
 	"github.com/gin-gonic/gin"
 	jsoniter "github.com/json-iterator/go"
 	ktrace "github.com/kunlun-qilian/trace"
 	"go.opentelemetry.io/otel/trace"
 	"gopkg.in/yaml.v2"
-	"time"
 )
 
 var j = jsoniter.ConfigCompatibleWithStandardLibrary

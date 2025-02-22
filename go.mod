@@ -1,6 +1,6 @@
 module github.com/kunlun-qilian/confserver
 
-go 1.20
+go 1.23
 
 require (
 	github.com/gin-contrib/gzip v0.0.5
@@ -11,9 +11,9 @@ require (
 	github.com/go-courier/x v0.1.2
 	github.com/json-iterator/go v1.1.12
 	github.com/julienschmidt/httprouter v1.3.0
-	github.com/kunlun-qilian/conflogger v0.2.0
+	github.com/kunlun-qilian/conflogger v0.3.0
 	github.com/kunlun-qilian/confx v0.0.1
-	github.com/kunlun-qilian/trace v0.3.3
+	github.com/kunlun-qilian/trace v0.4.0
 	github.com/sirupsen/logrus v1.9.3
 	github.com/swaggo/files v0.0.0-20220610200504-28940afbdbfe
 	github.com/swaggo/gin-swagger v1.5.0
