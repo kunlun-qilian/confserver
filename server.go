@@ -28,8 +28,8 @@ type Server struct {
 	// 跨域
 	CorsCheck bool
 	// 流式返回 取消压缩
-	Stream bool
-	r      *gin.Engine
+	Compress bool
+	r        *gin.Engine
 	// healthCheckUpdated
 	healthCheckUpdated bool
 }
@@ -51,7 +51,7 @@ func (s *Server) SetDefaults() {
 
 	if !s.healthCheckUpdated {
 		if s.HealthCheckPath == "" {
-			s.HealthCheckPath = fmt.Sprintf("http://:%d/", s.Port)
+			s.HealthCheckPath = fmt.Sprintf("http://:%d/healthz", s.Port)
 		} else {
 			s.HealthCheckPath = fmt.Sprintf("http://:%d%s", s.Port, s.HealthCheckPath)
 		}
@@ -68,7 +68,7 @@ func (s *Server) Init() {
 	s.r.UseH2C = s.UseH2C
 	// gzip
 	// 流式返回 取消压缩
-	if !s.Stream {
+	if s.Compress {
 		s.r.Use(gzip.Gzip(gzip.DefaultCompression))
 	}
 	// cors
@@ -83,8 +83,8 @@ func (s *Server) Init() {
 	// trace
 	s.r.Use(TraceHandler())
 
-	// root
-	s.r.GET("/", s.RootHandler)
+	// health check
+	s.r.GET("/healthz", s.HealthCheck)
 	// openapi
 	s.r.GET(fmt.Sprintf("/%s", strings.TrimPrefix(confx.Config.ServiceName(), "srv-")), s.OpenapiHandler)
 	if strings.ToLower(s.Mode) == "debug" {
@@ -129,7 +129,7 @@ func (s *Server) SvcRootRouter() *gin.RouterGroup {
 	return s.r.Group(confx.RootPath)
 }
 
-func (s *Server) RootHandler(ctx *gin.Context) {
+func (s *Server) HealthCheck(ctx *gin.Context) {
 	ctx.Data(200, "text/plain; charset=utf-8", []byte(confx.Config.ServiceName()))
 }
 
