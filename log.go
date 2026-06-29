@@ -10,9 +10,9 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/go-courier/logr"
 	"github.com/kunlun-qilian/conflogger"
-	trace2 "github.com/kunlun-qilian/trace"
+	trace2 "github.com/kunlun-qilian/confserver/pkg/trace"
 	"github.com/sirupsen/logrus"
-	"go.opentelemetry.io/contrib/propagators/b3"
+	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/propagation"
 	"go.opentelemetry.io/otel/trace"
 )
@@ -25,8 +25,10 @@ func TraceHandler() gin.HandlerFunc {
 
 		startTime := time.Now()
 		ctx := c.Request.Context()
-		b3Ctx := b3.New().Extract(ctx, propagation.HeaderCarrier(c.Request.Header))
-		span := trace2.Start(b3Ctx, c.FullPath(), trace.WithTimestamp(startTime), trace.WithSpanKind(trace.SpanKindServer))
+
+		propagator := otel.GetTextMapPropagator()
+		traceCtx := propagator.Extract(ctx, propagation.HeaderCarrier(c.Request.Header))
+		span := trace2.StartHTTPServerSpan(traceCtx, c.Request, c.FullPath(), trace.WithTimestamp(startTime), trace.WithSpanKind(trace.SpanKindServer))
 		defer func() {
 			span.End()
 		}()
@@ -35,38 +37,9 @@ func TraceHandler() gin.HandlerFunc {
 
 		// inject trace span
 		c.Request = c.Request.WithContext(context.WithValue(ctx, trace2.ContextTraceSpan{}, span))
-		// traceID, spanID := traceAndSpanIDFromContext(c.Request.Context())
-
 		c.Next()
+		span.SetHTTPResponseStatus(c.Writer.Status())
 
-		// endTime := time.Now()
-
-		// // status
-		// statusCode := c.Writer.Status()
-
-		// entry := logrus.WithFields(logrus.Fields{
-		// 	"tag":         "access",
-		// 	"status":      statusCode,
-		// 	"cost":        ReprOfDuration(endTime.Sub(startTime)),
-		// 	"remote_ip":   c.ClientIP(),
-		// 	"method":      c.Request.Method,
-		// 	"request_url": c.Request.URL.String(),
-		// 	"user_agent":  c.Request.UserAgent(),
-		// 	"refer":       c.Request.Referer(),
-		// 	"traceID":     traceID,
-		// 	"spanID":      spanID,
-		// })
-
-		// if statusCode >= http.StatusInternalServerError {
-		// 	// log.WithValues(convertLogFields(entry.Data)...).Error(fmt.Errorf("error status code:%d", statusCode))
-		// 	entry.Error()
-		// } else if statusCode >= http.StatusBadRequest && statusCode < http.StatusInternalServerError {
-		// 	// log.WithValues(convertLogFields(entry.Data)...).Warn(fmt.Errorf("warn status code:%d", statusCode))
-		// 	entry.Warn()
-		// } else {
-		// 	entry.Info()
-		// 	// log.WithValues(convertLogFields(entry.Data)...).Info("")
-		// }
 	}
 }
 
@@ -77,7 +50,7 @@ func LoggerHandler() gin.HandlerFunc {
 		c.Next()
 
 		endTime := time.Now()
-		traceID, spanID := traceAndSpanIDFromContext(c.Request.Context())
+		traceID, spanID := trace2.TraceAndSpanIDFromContext(c.Request.Context())
 
 		// status
 		statusCode := c.Writer.Status()
@@ -91,8 +64,8 @@ func LoggerHandler() gin.HandlerFunc {
 			"request_url": c.Request.URL.String(),
 			"user_agent":  c.Request.UserAgent(),
 			"refer":       c.Request.Referer(),
-			"traceID":     traceID,
-			"spanID":      spanID,
+			"trace_id":    traceID,
+			"span_id":     spanID,
 		})
 
 		if statusCode >= http.StatusInternalServerError {

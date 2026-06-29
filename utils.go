@@ -7,8 +7,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 	jsoniter "github.com/json-iterator/go"
-	ktrace "github.com/kunlun-qilian/trace"
-	"go.opentelemetry.io/otel/trace"
 	"gopkg.in/yaml.v2"
 )
 
@@ -25,34 +23,6 @@ func JSONToYAML(j []byte) ([]byte, error) {
 		return nil, err
 	}
 	return yaml.Marshal(jsonObj)
-}
-
-func traceAndSpanIDFromContext(ctx context.Context) (string, string) {
-	return traceIDFromContext(ctx), spanIDFromContext(ctx)
-}
-
-func traceIDFromContext(ctx context.Context) string {
-	span := ktrace.GetTraceSpanFromContext(ctx)
-	if span == nil {
-		return ""
-	}
-	spanCtx := trace.SpanContextFromContext(span.Context())
-	if spanCtx.HasTraceID() {
-		return spanCtx.TraceID().String()
-	}
-	return ""
-}
-
-func spanIDFromContext(ctx context.Context) string {
-	span := ktrace.GetTraceSpanFromContext(ctx)
-	if span == nil {
-		return ""
-	}
-	spanCtx := trace.SpanContextFromContext(span.Context())
-	if spanCtx.HasSpanID() {
-		return spanCtx.SpanID().String()
-	}
-	return ""
 }
 
 func RequestContextFromGinContext(c *gin.Context) context.Context {
