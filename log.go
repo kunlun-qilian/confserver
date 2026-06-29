@@ -19,7 +19,7 @@ import (
 
 func TraceHandler() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		if c.FullPath() == "/" || c.FullPath() == "/swagger/*any" {
+		if c.FullPath() == "/swagger/*any" || c.FullPath() == "/health" {
 			return
 		}
 
