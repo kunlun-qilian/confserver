@@ -183,8 +183,21 @@ type ContextTraceSpan struct {
 
 func GetTraceSpanFromContext(ctx context.Context) *Span {
 	span := ctx.Value(ContextTraceSpan{})
-	if span == nil {
+	if span != nil {
+		return span.(*Span)
+	}
+
+	otelSpan := SpanFromContext(ctx)
+	if !otelSpan.SpanContext().IsValid() {
 		return nil
 	}
-	return span.(*Span)
+	return newSpan(ctx, otelSpan)
+}
+
+func StartChildOrRootSpan(ctx context.Context, spanName string, opts ...oteltrace.SpanStartOption) *Span {
+	span := GetTraceSpanFromContext(ctx)
+	if span != nil {
+		return Start(span.Context(), spanName, opts...)
+	}
+	return Start(ctx, spanName, opts...)
 }
